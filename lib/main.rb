@@ -2,4 +2,4 @@
 # To change this template file, choose Tools | Templates
 # and open the template in the editor.
 
-puts "Hello World"
+puts "Welcome to S.O.G.E"
