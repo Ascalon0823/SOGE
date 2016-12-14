@@ -2,4 +2,7 @@
 # To change this template file, choose Tools | Templates
 # and open the template in the editor.
 
+require_relative "gui.rb"
 puts "Welcome to S.O.G.E"
+
+Gui.new
