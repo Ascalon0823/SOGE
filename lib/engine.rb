@@ -42,5 +42,11 @@ class Engine
     Attribute.new(name, type, value)
     self.saveAttr
   end
+  
+  def self.del_Attr(name)
+    self.loadAttr
+    Attribute.remove(name)
+    self.saveAttr
+  end
 
 end
