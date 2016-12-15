@@ -5,6 +5,7 @@ require 'gtk3'
 require_relative 'engine.rb'
 require_relative 'utility.rb'
 
+#main window for handling attribute
 class Gui < Gtk::Window
     def initialize
       window = Gtk::Window.new("S.O.G.E.")
@@ -13,10 +14,9 @@ class Gui < Gtk::Window
 
       table_attr = Gtk::Table.new(3,5,true)
       window.add(table_attr)
-      
+      #Text Field#
       textView = Gtk::TextView.new
       table_attr.attach(textView,0,5,0,2)
-
       
       b_attrLoad = Gtk::Button.new(:label => "Load Attributes")
       b_attrLoad.signal_connect "clicked" do |_widget|
@@ -53,7 +53,7 @@ class Gui < Gtk::Window
 
       Gtk.main
     end
-    
+    #Sub window to add attribute
     class AddAttrWindow < Gtk::Window
       def initialize
         window = Gtk::Window.new("Add new attribute")
@@ -101,7 +101,7 @@ class Gui < Gtk::Window
         window.show_all
       end
     end
-    
+    #Common Dialog window
     class DialogWindow < Gtk::Window
       def initialize(title,message)
         window = Gtk::Window.new(title)
@@ -122,10 +122,10 @@ class Gui < Gtk::Window
         window.show_all
       end
     end
-    
+    #Sub window to delete attribute
     class DeleteAttrWindow < Gtk::Window
       def initialize
-        window = Gtk::Window.new("DeleteAttribute")
+        window = Gtk::Window.new("Delete Attribute")
         window.set_size_request(400,300)
         window.set_border_width(1)
         table_attr_del = Gtk::Table.new(2,3,true)
@@ -142,10 +142,28 @@ class Gui < Gtk::Window
         text_attr_detail = Gtk::TextView.new
         table_attr_del.attach(text_attr_detail,1,3,0,1)
         
-        cbox_attr.signal_connect "changed" do 
-          text_attr_detail.buffer.text = Attribute.find(cbox_attr.active_iter[0]).detailText
+        b_cancel = Gtk::Button.new(:label => "Cancel")
+        b_cancel.signal_connect "clicked" do |_widget|
+          window.hide()
         end
+        table_attr_del.attach(b_cancel,0,1,1,2)
         
+        b_del = Gtk::Button.new(:label => "Delete")
+        b_del.signal_connect "clicked" do |_widget|
+          Engine.del_Attr(cbox_attr.active_iter[0])
+          window.hide()
+          DialogWindow.new("Delete Attribute","%s has been deleted" % [cbox_attr.active_iter[0]])
+        end
+        table_attr_del.attach(b_del,2,3,1,2)
+        b_del.sensitive=false
+        cbox_attr.signal_connect "changed" do 
+          if(cbox_attr.active_iter[0]!="")
+            b_del.sensitive =true
+            text_attr_detail.buffer.text = Attribute.find(cbox_attr.active_iter[0]).detailText
+          else
+            b_del.sensitive=false
+          end
+        end
         window.signal_connect("delete-event") { |_widget| window.hide() }
         window.show_all
       end
