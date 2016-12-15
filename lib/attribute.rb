@@ -57,4 +57,8 @@ class Attribute
   def detailText
     return "Attribute name = %s\ntype = %s\ndefault value = %s\n" % [@name,@type,@defValue]
   end
+  
+  def self.remove(name)
+    @@ha_attrs.delete(name)
+  end
 end
