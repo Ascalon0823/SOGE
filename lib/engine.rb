@@ -64,7 +64,7 @@ class Engine
           field.detail.each{|attr|
             line+="%s " % [attr]
           }
-          line+"\n"
+          line+="\n"
           f.write(line)
       }
       f.close

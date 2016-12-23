@@ -2,7 +2,7 @@
 # To change this template file, choose Tools | Templates
 # and open the template in the editor.
 require_relative "attribute.rb"
-
+require_relative "engine.rb"
 class Field
   
   @@ha_field_attrs =Hash.new
@@ -11,14 +11,22 @@ class Field
   def self.init
     @@ha_field_attrs.clear
     @@ha_fields.clear
-    
+    if(Attribute.empty?)
+      Engine.loadAttr
+    end
     Attribute.getList.each{|key,attr|
       if(attr.getType=="Field")
         @@ha_field_attrs[key]=attr.getValue
       end
     }
   end
-  
+  def self.num_attr
+    Field.init
+    return @@ha_field_attrs.size
+  end
+  def self.attributes
+    return @@ha_field_attrs
+  end
   def initialize(name,args)
     @ha_attrs = Hash.new
     @@ha_field_attrs.each{|key,value|
@@ -74,7 +82,6 @@ class Field
     @ha_attrs.each{|attr,value|
       line+="%s: %s " % [attr,value]
     }
-    line += "\n"
     return line
   end
   
@@ -94,6 +101,10 @@ class Field
   end
   
   def self.remove(name)
-    @@ha_field.delete(name)
+    @@ha_fields.delete(name)
+  end
+  
+  def self.find(name)
+    return @@ha_fields[name]
   end
 end
