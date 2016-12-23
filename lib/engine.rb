@@ -2,6 +2,7 @@
 # To change this template file, choose Tools | Templates
 # and open the template in the editor.
 require_relative 'attribute.rb'
+require_relative 'field.rb'
 
 class Engine
   def self.saveAttr
@@ -48,5 +49,62 @@ class Engine
     Attribute.remove(name)
     self.saveAttr
   end
-
+  
+  
+  def self.saveField
+    
+    if(Field.empty?)
+      return "No fields are saved since the hash list is empty"
+    else
+      f = File.open("world_descripter/fields.wd","w")
+      count=0
+      Field.getList.each { |name,field|
+          count+=1
+          line = "%s " % [name]
+          field.detail.each{|attr|
+            line+="%s " % [attr]
+          }
+          line+"\n"
+          f.write(line)
+      }
+      f.close
+      return "%s fields saved" % [count]
+    end
+  end
+  
+  def self.loadField
+    Field.clearList
+    if(Attribute.empty?)
+      self.loadAttr
+    end
+    Field.init
+    f = File.open("world_descripter/fields.wd","r")
+    count = 0
+    f.each_line do |line|
+        details = line.split
+        name = details[0]
+        args = details.slice(1, details.size-1)
+        Field.new(name,args)
+        count+=1
+    end
+    f.close
+    return "%s fields loaded" % [count]
+  end
+  
+  def self.dispFields
+    return Field.print
+  end
+  
+   def self.add_Field(name,args)
+    self.loadField
+    Field.new(name, args)
+    self.saveField
+  end
+  
+  def self.del_Field(name)
+    self.loadField
+    Field.remove(name)
+    self.saveField
+  end
+  
 end
