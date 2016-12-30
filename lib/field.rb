@@ -20,6 +20,7 @@ class Field
       end
     }
   end
+  
   def self.num_attr
     Field.init
     return @@ha_field_attrs.size
@@ -27,6 +28,7 @@ class Field
   def self.attributes
     return @@ha_field_attrs
   end
+  
   def initialize(name,args)
     @ha_attrs = Hash.new
     @@ha_field_attrs.each{|key,value|
@@ -106,5 +108,65 @@ class Field
   
   def self.find(name)
     return @@ha_fields[name]
+  end
+  
+  
+  def self.save
+    
+    if(self.empty?)
+      return "No fields are saved since the hash list is empty"
+    else
+      f = File.open("world_descripter/fields.wd","w")
+      count=0
+      self.getList.each { |name,field|
+          count+=1
+          line = "%s " % [name]
+          field.detail.each{|attr|
+            line+="%s " % [attr]
+          }
+          line+="\n"
+          f.write(line)
+      }
+      f.close
+      return "%s fields saved" % [count]
+    end
+  end
+  
+  def self.forceSave
+    f = File.open("world_descripter/fields.wd","w")
+    count=0
+    self.getList.each { |name,field|
+        count+=1
+        line = "%s " % [name]
+        field.detail.each{|attr|
+          line+="%s " % [attr]
+        }
+        line+="\n"
+        f.write(line)
+    }
+    f.close
+    return "%s fields saved" % [count]
+  end
+  
+  def self.load
+    self.clearList
+    if(Attribute.empty?)
+      Attribute.load
+    end
+    self.init
+    f = File.open("world_descripter/fields.wd","r")
+    count = 0
+    f.each_line do |line|
+        details = line.split
+        name = details[0]
+        args = details.slice(1, details.size-1)
+        self.new(name,args)
+        count+=1
+    end
+    f.close
+    return "%s fields loaded" % [count]
+  end
+  def self.disp
+    return self.print
   end
 end
