@@ -61,4 +61,37 @@ class Attribute
   def self.remove(name)
     @@ha_attrs.delete(name)
   end
+  
+  def self.save
+    if(self.empty?)
+      return "No attributes saved since the hash list is empty"
+    else
+      f = File.open("world_descripter/attributes.wd","w")
+      count=0
+      self.getList.each { |name,attr|
+          count+=1
+          line = "%s %s %s \n" % [attr.getName,attr.getType,attr.getValue]
+          f.write(line)
+      }
+      f.close
+      return "%s attributes saved" % [count]
+    end
+  end
+
+  def self.load
+    self.clearList
+    f = File.open("world_descripter/attributes.wd","r")
+    count = 0
+    f.each_line do |line|
+        details = line.split
+        self.new(details[0],details[1],details[2])
+        count+=1
+    end
+    f.close
+    return "%s attributes loaded" % [count]
+  end
+  
+  def self.disp
+    return self.print
+  end
 end
