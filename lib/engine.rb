@@ -3,8 +3,10 @@
 # and open the template in the editor.
 require_relative 'attribute.rb'
 require_relative 'field.rb'
+require_relative 'agent.rb'
 
 class Engine
+  
   def self.saveAttr
     if(Attribute.empty?)
       return "No attributes saved since the hash list is empty"
@@ -50,61 +52,44 @@ class Engine
     self.saveAttr
   end
   
-  
-  def self.saveField
-    
-    if(Field.empty?)
-      return "No fields are saved since the hash list is empty"
-    else
-      f = File.open("world_descripter/fields.wd","w")
-      count=0
-      Field.getList.each { |name,field|
-          count+=1
-          line = "%s " % [name]
-          field.detail.each{|attr|
-            line+="%s " % [attr]
-          }
-          line+="\n"
-          f.write(line)
-      }
-      f.close
-      return "%s fields saved" % [count]
-    end
+  def self.loadClass(className)
+    Kernel.const_get(className).load
   end
   
-  def self.loadField
-    Field.clearList
-    if(Attribute.empty?)
-      self.loadAttr
-    end
-    Field.init
-    f = File.open("world_descripter/fields.wd","r")
-    count = 0
-    f.each_line do |line|
-        details = line.split
-        name = details[0]
-        args = details.slice(1, details.size-1)
-        Field.new(name,args)
-        count+=1
-    end
-    f.close
-    return "%s fields loaded" % [count]
+  def self.saveClass(className)
+    Kernel.const_get(className).save
   end
   
-  def self.dispFields
-    return Field.print
+  def self.dispClass(className)
+    Kernel.const_get(className).disp
   end
   
-   def self.add_Field(name,args)
-    self.loadField
-    Field.new(name, args)
-    self.saveField
+  def self.addObject(className,name,args)
+    Kernel.const_get(className).load
+    obj = Kernel.const_get(className).new(name,args)
+    Kernel.const_get(className).save
+    return obj
   end
   
-  def self.del_Field(name)
-    self.loadField
-    Field.remove(name)
-    self.saveField
+  def self.delObject(className,name)
+    Kernel.const_get(className).load
+    Kernel.const_get(className).remove(name)
+    Kernel.const_get(className).forceSave
   end
   
+  def self.num_attr(className)
+    return Kernel.const_get(className).num_attr
+  end
+  
+  def self.attributes(className)
+    return Kernel.const_get(className).attributes
+  end
+  
+  def self.getList(className)
+    return Kernel.const_get(className).getList
+  end
+  
+  def self.find(className,name)
+    return Kernel.const_get(className).find(name)
+  end
 end
