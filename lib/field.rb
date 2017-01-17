@@ -3,6 +3,7 @@
 # and open the template in the editor.
 require_relative "attribute.rb"
 require_relative "engine.rb"
+
 class Field
   
   @@ha_field_attrs =Hash.new
@@ -12,7 +13,7 @@ class Field
     @@ha_field_attrs.clear
     @@ha_fields.clear
     if(Attribute.empty?)
-      Engine.loadAttr
+      Engine.loadClass("Attribute")
     end
     Attribute.getList.each{|key,attr|
       if(attr.getType=="Field")

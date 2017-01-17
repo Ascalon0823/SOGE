@@ -2,6 +2,7 @@
 # To change this template file, choose Tools | Templates
 # and open the template in the editor.
 require_relative "attribute.rb"
+require_relative "engine.rb"
 
 class Agent
   @@ha_agent_attrs =Hash.new
@@ -10,11 +11,12 @@ class Agent
     self.init
     return @@ha_agent_attrs.size
   end
+  
   def self.init
     @@ha_agent_attrs.clear
     @@ha_agents.clear
     if(Attribute.empty?)
-      Engine.loadAttr
+      Engine.loadClass("Attribute")
     end
     Attribute.getList.each{|key,attr|
       if(attr.getType=="Agent")

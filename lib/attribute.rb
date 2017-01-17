@@ -4,11 +4,19 @@
 
 class Attribute
   @@ha_attrs = Hash.new
-  
-  def initialize(name, type, defValue)
+  def self.num_attr
+    return 3
+  end
+  def self.attributes
+    ha_attributes = Hash.new
+    ha_attributes["type"] ="none"
+    ha_attributes["defValue"] = "none"
+    return ha_attributes
+  end
+  def initialize(name, args)
     @name = name
-    @type = type
-    @defValue = Integer(defValue) rescue defValue
+    @type = args[0]
+    @defValue = Integer(args[1]) rescue args[1]
     @@ha_attrs[name]=self
   end
   
@@ -33,7 +41,6 @@ class Attribute
       @@ha_attrs.each{|key,attr|
 
         text =  "Attribute name = %s, type = %s, default value = %s" % [attr.getName,attr.getType,attr.getValue]
-        puts text
         textBuffer << text
       }
     end
@@ -62,6 +69,17 @@ class Attribute
     @@ha_attrs.delete(name)
   end
   
+  def self.forceSave
+    f = File.open("world_descripter/attributes.wd","w")
+    count=0
+    self.getList.each { |name,attr|
+        count+=1
+        line = "%s %s %s \n" % [attr.getName,attr.getType,attr.getValue]
+        f.write(line)
+    }
+    f.close
+    return "%s attributes saved" % [count]
+  end
   def self.save
     if(self.empty?)
       return "No attributes saved since the hash list is empty"
@@ -84,7 +102,7 @@ class Attribute
     count = 0
     f.each_line do |line|
         details = line.split
-        self.new(details[0],details[1],details[2])
+        self.new(details[0],[details[1],details[2]])
         count+=1
     end
     f.close

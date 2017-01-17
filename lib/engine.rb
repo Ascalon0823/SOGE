@@ -4,54 +4,11 @@
 require_relative 'attribute.rb'
 require_relative 'field.rb'
 require_relative 'agent.rb'
+require_relative 'battle.rb'
+require_relative  'formula.rb'
 
 class Engine
-  
-  def self.saveAttr
-    if(Attribute.empty?)
-      return "No attributes saved since the hash list is empty"
-    else
-      f = File.open("world_descripter/attributes.wd","w")
-      count=0
-      Attribute.getList.each { |name,attr|
-          count+=1
-          line = "%s %s %s \n" % [attr.getName,attr.getType,attr.getValue]
-          f.write(line)
-      }
-      f.close
-      return "%s attributes saved" % [count]
-    end
-  end
 
-  def self.loadAttr
-    Attribute.clearList
-    f = File.open("world_descripter/attributes.wd","r")
-    count = 0
-    f.each_line do |line|
-        details = line.split
-        Attribute.new(details[0],details[1],details[2])
-        count+=1
-    end
-    f.close
-    return "%s attributes loaded" % [count]
-  end
-  
-  def self.dispAttr
-    return Attribute.print
-  end
-  
-  def self.add_Attr(name,type,value)
-    self.loadAttr
-    Attribute.new(name, type, value)
-    self.saveAttr
-  end
-  
-  def self.del_Attr(name)
-    self.loadAttr
-    Attribute.remove(name)
-    self.saveAttr
-  end
-  
   def self.loadClass(className)
     Kernel.const_get(className).load
   end
@@ -91,5 +48,16 @@ class Engine
   
   def self.find(className,name)
     return Kernel.const_get(className).find(name)
+  end
+  
+  def self.test_creation
+    Field.init
+    Field.load
+    field= Field.find("TestField")
+
+    Agent.init
+    Agent.load
+    teams = [[Agent.find("TestGuy")],[Agent.find("TestGuyB")]]
+    Battle.new(field,teams)
   end
 end
